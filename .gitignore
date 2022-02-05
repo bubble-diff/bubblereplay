@@ -1,0 +1,10 @@
+# MacOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Binaries for programs and plugins
+bubblereplay
+output/
