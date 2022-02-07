@@ -9,5 +9,7 @@ import (
 func main() {
 	r := gin.Default()
 	r.GET("/ping", handlers.Ping)
-	r.Run("0.0.0.0:8080")
+	_record := r.Group("/record")
+	_record.POST("/add", handlers.AddRecord)
+	r.Run("localhost:6789")
 }
