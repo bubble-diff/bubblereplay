@@ -10,9 +10,9 @@ import (
 )
 
 type setDeployedHandler struct {
-	TaskID int64 `json:"TaskID"`
+	TaskID int64 `json:"task_id"`
 	// Addr 基准服务地址
-	Addr string `json:"Addr"`
+	Addr string `json:"addr"`
 	// ttl 部署凭证有效时长
 	ttl time.Duration
 }
