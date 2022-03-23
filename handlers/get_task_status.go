@@ -37,7 +37,7 @@ func (h *getTaskStatusHandler) GetTaskStatus(c *gin.Context) {
 
 	log.Printf("[GetTaskStatus] task=%d is_running=%v", taskid, isRunning)
 	c.JSON(200, gin.H{
-		"err":        nil,
+		"err":        "",
 		"is_running": isRunning,
 	})
 }

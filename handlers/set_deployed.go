@@ -18,7 +18,7 @@ type setDeployedHandler struct {
 }
 
 var SetDeployedHandler = &setDeployedHandler{
-	ttl: 5 * time.Second,
+	ttl: 10 * time.Second,
 }
 
 func (h *setDeployedHandler) SetDeployed(c *gin.Context) {
