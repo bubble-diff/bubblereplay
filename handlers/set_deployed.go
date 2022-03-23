@@ -32,7 +32,7 @@ func (h *setDeployedHandler) SetDeployed(c *gin.Context) {
 		})
 		return
 	}
-	log.Printf("TaskID=%d Addr=%s", h.TaskID, h.Addr)
+	log.Printf("[SetDeployed] TaskID=%d Addr=%s", h.TaskID, h.Addr)
 
 	err = app.SetDeployed(c, h.TaskID, h.Addr, h.ttl)
 	if err != nil {

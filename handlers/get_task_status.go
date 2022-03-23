@@ -15,7 +15,7 @@ var GetTaskStatusHandler = &getTaskStatusHandler{}
 
 // GetTaskStatus 获取diff任务是否运行
 func (h *getTaskStatusHandler) GetTaskStatus(c *gin.Context) {
-	taskid, err := strconv.ParseInt(c.Param("TaskID"), 10, 64)
+	taskid, err := strconv.ParseInt(c.Param("taskid"), 10, 64)
 	if err != nil {
 		log.Printf("[GetTaskStatus] parse int failed, %s", err)
 		c.JSON(200, gin.H{
