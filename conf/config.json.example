@@ -1,0 +1,18 @@
+{
+  "listen_addr": "",
+  "client_id": "",
+  "client_secret": "",
+  "bubblediff_ui": "",
+  "mongo": {
+    "url": "",
+    "collections": {
+      "user": "",
+      "task": ""
+    }
+  },
+  "redis": {
+    "addr": "",
+    "password": ""
+  },
+  "env": ""
+}
