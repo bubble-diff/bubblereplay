@@ -11,3 +11,6 @@ idl/
 # Binaries for programs and plugins
 bubblereplay
 output/
+
+# Configuration
+conf/config.json
