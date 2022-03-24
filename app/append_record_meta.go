@@ -13,7 +13,7 @@ func AppendRecordMeta(ctx context.Context, taskid int64, cosKey string, path str
 	meta := models.RecordMeta{
 		CosKey:   cosKey,
 		Path:     path,
-		DiffRate: rate,
+		DiffRate: fmt.Sprintf("%.2f%%", rate),
 	}
 	b, err := json.Marshal(meta)
 	if err != nil {
