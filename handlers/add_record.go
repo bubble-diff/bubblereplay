@@ -80,7 +80,6 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	record.Diff = oldNode.Diff(newNode).Render()
 	log.Println(record.Diff)
 
-	// todo: [Advanced] 将record存储在腾讯cos中
 	err = app.UploadRecord(ctx, record)
 	if err != nil {
 		log.Println(err)
