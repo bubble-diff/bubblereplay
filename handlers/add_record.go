@@ -12,6 +12,7 @@ import (
 	jd "github.com/josephburnett/jd/lib"
 
 	"github.com/bubble-diff/bubblereplay/app"
+	"github.com/bubble-diff/bubblereplay/levenshtein"
 	"github.com/bubble-diff/bubblereplay/models"
 )
 
@@ -78,8 +79,11 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	oldNode, _ := jd.ReadJsonString(string(record.OldResp))
 	newNode, _ := jd.ReadJsonString(string(record.NewResp))
 	record.Diff = oldNode.Diff(newNode).Render()
-	log.Println(record.Diff)
 
+	// 计算差异百分比
+	record.DiffRate = levenshtein.Compute(string(record.OldResp), string(record.NewResp))
+
+	// 上传record至cos
 	err = app.UploadRecord(ctx, record)
 	if err != nil {
 		log.Println(err)
