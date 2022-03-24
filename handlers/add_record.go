@@ -84,7 +84,13 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	record.DiffRate = levenshtein.Compute(string(record.OldResp), string(record.NewResp))
 
 	// 上传record至cos
-	err = app.UploadRecord(ctx, record)
+	cosKey, err := app.UploadRecord(ctx, record)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = app.AppendRecordMeta(ctx, record.TaskID, cosKey, oldReq.URL.Path, record.DiffRate)
 	if err != nil {
 		log.Println(err)
 		return

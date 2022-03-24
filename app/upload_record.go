@@ -12,10 +12,10 @@ import (
 	"github.com/bubble-diff/bubblereplay/models"
 )
 
-func UploadRecord(ctx context.Context, record *models.Record) (err error) {
+func UploadRecord(ctx context.Context, record *models.Record) (cosKey string, err error) {
 	UUID, err := uuid.NewRandom()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	key := fmt.Sprintf("%d/%s", record.TaskID, UUID.String())
@@ -28,13 +28,13 @@ func UploadRecord(ctx context.Context, record *models.Record) (err error) {
 
 	b, err := json.Marshal(record)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = cos.Object.Put(ctx, key, bytes.NewReader(b), opt)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return UUID.String(), nil
 }
