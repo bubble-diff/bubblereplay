@@ -7,3 +7,11 @@ update-idl:
 	@echo "step2> compile idl..."
 	@protoc --go_out=. idl/*.proto
 	@go mod tidy
+
+build:
+	@mkdir -p output/
+	@cp conf/* output/
+	@go build -o output/bubblereplay
+
+run: build
+	@cd output && ./bubblereplay
