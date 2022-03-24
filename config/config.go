@@ -23,6 +23,12 @@ type Config struct {
 		Addr     string `json:"addr"`
 		Password string `json:"password"`
 	} `json:"redis"`
+	Cos struct {
+		BucketUrl  string `json:"bucket_url"`
+		ServiceUrl string `json:"service_url"`
+		SecretId   string `json:"secret_id"`
+		SecretKey  string `json:"secret_key"`
+	} `json:"cos"`
 	Env string `json:"env"`
 }
 

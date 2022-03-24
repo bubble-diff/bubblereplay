@@ -14,5 +14,11 @@
     "addr": "",
     "password": ""
   },
+  "cos": {
+      "bucket_url": "",
+      "service_url": "",
+      "secret_id": "",
+      "secret_key": ""
+    },
   "env": ""
 }
