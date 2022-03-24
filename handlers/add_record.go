@@ -3,6 +3,7 @@ package handlers
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"io"
 	"log"
 	"net/http"
@@ -27,12 +28,12 @@ func AddRecord(c *gin.Context) {
 	// 后台异步重放，忽略操作失败，因为丢失一些"record"是可容忍的。
 	// todo: [Advanced] 不必每个record都建立goroutine，
 	//  尝试以TaskID为最小单位建立goroutine。
-	go addRecordProcess(record)
+	go addRecordProcess(c, record)
 
 	c.JSON(200, nil)
 }
 
-func addRecordProcess(record *models.Record) {
+func addRecordProcess(ctx context.Context, record *models.Record) {
 	var err error
 	// todo: [Advanced] 每次add record都要查task配置太不划算，应该将这个信息缓存起来，
 	//  尝试以TaskID为最小单位建立goroutine。
@@ -80,6 +81,9 @@ func addRecordProcess(record *models.Record) {
 	log.Println(record.Diff)
 
 	// todo: [Advanced] 将record存储在腾讯cos中
-	//  目前为了方便存在redis里先。
-
+	err = app.UploadRecord(ctx, record)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
