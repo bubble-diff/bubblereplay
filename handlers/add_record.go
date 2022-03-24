@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	jd "github.com/josephburnett/jd/lib"
 
+	"github.com/bubble-diff/bubblereplay/app"
 	"github.com/bubble-diff/bubblereplay/pb"
 )
 
@@ -27,45 +28,43 @@ func AddRecord(c *gin.Context) {
 		return
 	}
 
+	// 后台异步重放，忽略操作失败，因为丢失一些"record"是可容忍的。
+	// todo: [Advanced] 不必每个record都建立goroutine，
+	//  尝试以TaskID为最小单位建立goroutine。
 	go addRecordProcess(req.Record)
 
 	resp.Msg = "OK"
 	c.ProtoBuf(200, &resp)
 }
 
-// addRecordProcess 都是耗时操作，需要异步完成(goroutine)，忽略操作失败，因为丢失record是可容忍的。
 func addRecordProcess(record *pb.Record) {
-	// todo: 第一步，重放req并diff，最后日志打印diff结果
+	// todo: [Advanced] 每次add record都要查task配置太不划算，应该将这个信息缓存起来，
+	//  尝试以TaskID为最小单位建立goroutine。
+	task, err := app.GetTaskDetail(record.TaskId)
 
-	// read raw_req
+	// 读取旧请求
 	oldReq, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(record.OldReq)))
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	// build new req
+	// 构建新请求
 	_url := oldReq.URL
 	_url.Scheme = "http"
-	// todo: new req host get from task config
-	_url.Host = "127.0.0.1:8081"
+	_url.Host = task.TrafficConfig.Addr
 	newReq, err := http.NewRequest(oldReq.Method, _url.String(), oldReq.Body)
 	for key, values := range oldReq.Header {
 		for _, value := range values {
 			newReq.Header.Add(key, value)
 		}
 	}
-
-	// get new resp
+	// 获得新响应
 	newResp, err := http.DefaultClient.Do(newReq)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	// todo: if newResp is nil
-	if newResp == nil {
-		log.Println(err)
-		return
-	}
+
 	// todo: if Content-Encoding specified, set an appropriate reader,
 	//  like gzip, deflate...
 
@@ -78,12 +77,14 @@ func addRecordProcess(record *pb.Record) {
 	}
 	record.NewResp = rawNewResp
 
-	// diff old/new resp
+	// 差异比对新旧响应
 	// todo: 根据diff任务配置进行高级处理
 	oldNode, _ := jd.ReadJsonString(string(record.OldResp))
 	newNode, _ := jd.ReadJsonString(string(record.NewResp))
 	result := oldNode.Diff(newNode)
 	log.Println(result.Render())
 
-	// todo: 第二步，将record存储在腾讯cos中
+	// todo: [Advanced] 将record存储在腾讯cos中
+	//  目前为了方便存在redis里先。
+
 }
