@@ -7,9 +7,10 @@ replace github.com/josephburnett/jd v1.5.1 => github.com/josephburnett/jd v1.5.0
 require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/google/uuid v1.3.0
 	github.com/josephburnett/jd v1.5.1
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.34
 	go.mongodb.org/mongo-driver v1.8.4
-	google.golang.org/protobuf v1.27.1
 )
 
 require (
@@ -26,7 +27,6 @@ require (
 	github.com/golang/protobuf v1.5.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
@@ -37,7 +37,6 @@ require (
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
 	github.com/mozillazg/go-httpheader v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/tencentyun/cos-go-sdk-v5 v0.7.34 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect
@@ -47,5 +46,6 @@ require (
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.6 // indirect
+	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
