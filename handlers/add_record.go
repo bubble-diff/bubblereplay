@@ -39,6 +39,17 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	// todo: [Advanced] 每次add record都要查task配置太不划算，应该将这个信息缓存起来，
 	//  尝试以TaskID为最小单位建立goroutine。
 	task, err := app.GetTaskDetail(record.TaskID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 更新record总数
+	err = app.AddTotalRecord(ctx, task.ID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	// 读取旧请求
 	oldReq, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(record.OldReq)))
@@ -91,6 +102,12 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	}
 
 	err = app.AppendRecordMeta(ctx, record.TaskID, cosKey, oldReq.URL.Path, record.DiffRate)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = app.AddSuccessRecord(ctx, task.ID)
 	if err != nil {
 		log.Println(err)
 		return
