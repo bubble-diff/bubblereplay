@@ -44,6 +44,19 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 		return
 	}
 
+	// 读取旧请求
+	oldReq, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(record.OldReq)))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 过滤判断
+	if task.FilterConfig.Drop(ctx, oldReq) {
+		log.Printf("[addRecordProcess] drop packet=%+v", oldReq)
+		return
+	}
+
 	// 更新record总数
 	err = app.AddTotalRecord(ctx, task.ID)
 	if err != nil {
@@ -51,12 +64,6 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 		return
 	}
 
-	// 读取旧请求
-	oldReq, err := http.ReadRequest(bufio.NewReader(bytes.NewReader(record.OldReq)))
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	// 构建新请求
 	_url := oldReq.URL
 	_url.Scheme = "http"
@@ -67,6 +74,7 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 			newReq.Header.Add(key, value)
 		}
 	}
+
 	// 获得新响应
 	newResp, err := http.DefaultClient.Do(newReq)
 	if err != nil {
@@ -86,13 +94,18 @@ func addRecordProcess(ctx context.Context, record *models.Record) {
 	}
 
 	// 差异比对新旧响应
-	// todo: 根据diff任务配置进行高级处理
+	var metadata []jd.Metadata
+	if task.AdvanceConfig.IsIgnoreArraySequence {
+		metadata = append(metadata, jd.SET)
+	}
 	oldNode, _ := jd.ReadJsonString(string(record.OldResp))
 	newNode, _ := jd.ReadJsonString(string(record.NewResp))
-	record.Diff = oldNode.Diff(newNode).Render()
+	record.Diff = oldNode.Diff(newNode, metadata...).Render()
 
 	// 计算差异百分比
-	record.DiffRate = levenshtein.Compute(string(record.OldResp), string(record.NewResp))
+	if len(record.Diff) != 0 {
+		record.DiffRate = levenshtein.Compute(string(record.OldResp), string(record.NewResp))
+	}
 
 	// 上传record至cos
 	cosKey, err := app.UploadRecord(ctx, record)
