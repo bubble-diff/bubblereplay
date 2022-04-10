@@ -5,6 +5,7 @@ go 1.17
 replace github.com/josephburnett/jd v1.5.1 => github.com/josephburnett/jd v1.5.0
 
 require (
+	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.3.0
